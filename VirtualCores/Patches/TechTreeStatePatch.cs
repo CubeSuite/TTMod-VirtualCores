@@ -21,5 +21,33 @@ namespace VirtualCores.Patches
                  + VirtualCoresPlugin.virtualCoreCounts[type];
             return false;
         }
+
+        [HarmonyPatch(typeof(TechTreeState), "HandleEndOfFrame")]
+        [HarmonyPostfix]
+        static void addVirtualCoresToClusters(TechTreeState __instance) {
+            __instance.freeCores = 0;
+            int num = Math.Max(__instance.totalResearchCores.Count, __instance.usedResearchCores.Count);
+            for (int i = 0; i < num; i++) {
+                int num2 = __instance.NumCoresOfTypePlaced(i) + VirtualCoresPlugin.virtualCoreCounts[(ResearchCoreDefinition.CoreType)i];
+                if (__instance.usedResearchCores.Count > i) {
+                    num2 -= __instance.usedResearchCores[i];
+                }
+                if (num2 > 0) {
+                    int num3 = GameDefines.instance.coreClusterSizes[i];
+                    if (num3 >= 0) {
+                        __instance.freeCores += num2 * num3;
+                    }
+                    else {
+                        __instance.freeCores += num2 / -num3;
+                    }
+                }
+            }
+            ref UpgradeState[] ptr = ref GameState.instance.upgradeStates;
+            __instance.freeCoresAssembling = (float)__instance.freeCores * ptr[22].floatVal * 0.01f;
+            __instance.freeCoresMining = (float)__instance.freeCores * ptr[19].floatVal * 0.01f;
+            __instance.freeCoresPowerOutput = (float)__instance.freeCores * ptr[23].floatVal * 0.01f;
+            __instance.freeCoresSmelting = (float)__instance.freeCores * ptr[20].floatVal * 0.01f;
+            __instance.freeCoresThreshing = (float)__instance.freeCores * ptr[21].floatVal * 0.01f;
+        }
     }
 }
