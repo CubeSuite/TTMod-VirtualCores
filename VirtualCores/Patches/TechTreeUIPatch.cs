@@ -62,7 +62,7 @@ namespace VirtualCores.Patches
                 coreTypesToDisplay = (List<ResearchCoreDefinition.CoreType>)coreTypesToDisplayInfo.GetValue(__instance);
             }
             else {
-                Debug.Log("Couldn't acess coreTypesToDisplay");
+                Debug.Log("Couldn't access coreTypesToDisplay");
             }
 
             return coreTypesToDisplay;

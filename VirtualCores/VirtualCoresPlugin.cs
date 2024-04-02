@@ -17,7 +17,7 @@ namespace VirtualCores
     {
         private const string MyGUID = "com.equinox.VirtualCores";
         private const string PluginName = "VirtualCores";
-        private const string VersionString = "1.0.0";
+        private const string VersionString = "2.0.0";
 
         private static readonly Harmony Harmony = new Harmony(MyGUID);
         public static ManualLogSource Log = new ManualLogSource(PluginName);

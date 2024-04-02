@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HarmonyLib;
+using UnityEngine;
 
 namespace VirtualCores.Patches
 {
@@ -28,18 +29,11 @@ namespace VirtualCores.Patches
             __instance.freeCores = 0;
             int num = Math.Max(__instance.totalResearchCores.Count, __instance.usedResearchCores.Count);
             for (int i = 0; i < num; i++) {
-                int num2 = __instance.NumCoresOfTypePlaced(i) + VirtualCoresPlugin.virtualCoreCounts[(ResearchCoreDefinition.CoreType)i];
-                if (__instance.usedResearchCores.Count > i) {
-                    num2 -= __instance.usedResearchCores[i];
-                }
-                if (num2 > 0) {
-                    int num3 = GameDefines.instance.coreClusterSizes[i];
-                    if (num3 >= 0) {
-                        __instance.freeCores += num2 * num3;
-                    }
-                    else {
-                        __instance.freeCores += num2 / -num3;
-                    }
+                ResearchCoreDefinition.CoreType coreType = (ResearchCoreDefinition.CoreType)i;
+                int num2 = __instance.NumCoresAvailable(coreType) + VirtualCoresPlugin.virtualCoreCounts[(ResearchCoreDefinition.CoreType)i];
+                ResearchCoreDefinition researchCoreDefinition;
+                if (num2 > 0 && GameDefines.instance.TryGetCoreDefinitionForType(coreType, out researchCoreDefinition) && researchCoreDefinition.clusterSize > 0f) {
+                    __instance.freeCores += Mathf.FloorToInt((float)num2 / researchCoreDefinition.clusterSize);
                 }
             }
             ref UpgradeState[] ptr = ref GameState.instance.upgradeStates;
