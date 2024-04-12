@@ -16,10 +16,21 @@ namespace VirtualCores.Patches
             while(__instance.usedResearchCores.Count <= (int)type) {
                 __instance.usedResearchCores.Add(0);
             }
-            __result = ((float)__instance.NumCoresOfTypePlaced((int)type) 
-                 * TechTreeState.coreEffiencyMultipliers[(int)type]).FloorToInt()
-                 - __instance.usedResearchCores[(int)type]
-                 + VirtualCoresPlugin.virtualCoreCounts[type];
+
+            int coresPlaced = __instance.NumCoresOfTypePlaced((int)type);
+            if(TechTreeState.coreEffiencyMultipliers.Count() < (int)type) {
+                coresPlaced *= TechTreeState.coreEffiencyMultipliers[(int)type].FloorToInt();
+            }
+
+            if (__instance.usedResearchCores.Count > (int)type) {
+                coresPlaced -= __instance.usedResearchCores[(int)type];
+            }
+
+            if (VirtualCoresPlugin.virtualCoreCounts.ContainsKey(type)) {
+                coresPlaced += VirtualCoresPlugin.virtualCoreCounts[type];
+            }
+
+            __result = coresPlaced;
             return false;
         }
 
@@ -30,7 +41,7 @@ namespace VirtualCores.Patches
             int num = Math.Max(__instance.totalResearchCores.Count, __instance.usedResearchCores.Count);
             for (int i = 0; i < num; i++) {
                 ResearchCoreDefinition.CoreType coreType = (ResearchCoreDefinition.CoreType)i;
-                int num2 = __instance.NumCoresAvailable(coreType) + VirtualCoresPlugin.virtualCoreCounts[(ResearchCoreDefinition.CoreType)i];
+                int num2 = __instance.NumCoresAvailable(coreType);
                 ResearchCoreDefinition researchCoreDefinition;
                 if (num2 > 0 && GameDefines.instance.TryGetCoreDefinitionForType(coreType, out researchCoreDefinition) && researchCoreDefinition.clusterSize > 0f) {
                     __instance.freeCores += Mathf.FloorToInt((float)num2 / researchCoreDefinition.clusterSize);

@@ -9,6 +9,7 @@ using VirtualCores.Patches;
 using HarmonyLib;
 using I2.Loc.SimpleJSON;
 using UnityEngine;
+using EquinoxsModUtils;
 
 namespace VirtualCores
 {
@@ -17,7 +18,7 @@ namespace VirtualCores
     {
         private const string MyGUID = "com.equinox.VirtualCores";
         private const string PluginName = "VirtualCores";
-        private const string VersionString = "2.0.0";
+        private const string VersionString = "2.0.2";
 
         private static readonly Harmony Harmony = new Harmony(MyGUID);
         public static ManualLogSource Log = new ManualLogSource(PluginName);
@@ -39,7 +40,6 @@ namespace VirtualCores
 
             Directory.CreateDirectory(saveDataFolder);
             Harmony.CreateAndPatchAll(typeof(MemoryTreePatch));
-            Harmony.CreateAndPatchAll(typeof(TechTreeUIPatch));
             Harmony.CreateAndPatchAll(typeof(TechTreeStatePatch));
             Harmony.CreateAndPatchAll(typeof(SaveStatePatch));
         }
